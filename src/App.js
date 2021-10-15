@@ -64,13 +64,17 @@ const App = () => {
        setIsEdit(false);
        if(grocery){
 
-        {
+        
           list.map((item)=>{
             if(item.id===idin){
-              item.grocery = grocery;
+              return(
+               item.grocery= grocery);
+            }
+            else{
+              return(item.grocery);
             }
           })
-        }
+        
 
          setGrocery('');
          showAlert(true, 'success', 'value changed');
