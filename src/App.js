@@ -6,8 +6,6 @@ const App = () => {
   const [grocery, setGrocery] =useState("");
   const [list,setList] =useState([]);
   const [showClear,setShowClear] = useState(false);
-  const [add,setAdd] = useState(false);
-  const [dlt,setDlt] = useState(false);
   const [isEdit,setIsEdit] =useState(false);
   const [idin,setIdin] = useState(0);
   const [alert,setAlert] = useState({show: false, msg: "" , type:'' });
@@ -18,8 +16,6 @@ const App = () => {
 
   const handleSubmit =(e) =>{
      e.preventDefault();    
-       setAdd(true);
-       setDlt(false);
        setIsEdit(false);
        if(grocery){
          const item={id: new Date().getTime().toString() , grocery};
@@ -44,8 +40,6 @@ const App = () => {
   },[list])
 
   const handleDelete =(id) =>{
-    setAdd(false);
-    setDlt(true);
     showAlert(true, 'danger', 'item removed');
     const newList =list.filter((item) =>item.id !==id);
     setList(newList);
@@ -60,16 +54,13 @@ const App = () => {
   }
 
   const handleClear = () =>{
-    setAdd(false);
-    setDlt(false);
     showAlert(true, 'danger', 'empty list');
+    setGrocery('');
     setList([]);
   }
 
   const handleEditSubmit = (e) =>{
     e.preventDefault();
-    setAdd(true);
-       setDlt(false);
        setIsEdit(false);
        if(grocery){
 
@@ -100,8 +91,6 @@ const App = () => {
 
        
         {alert.show && <Alert {...alert} removeAlert={showAlert} list={list} />}
-        {/* {add &&<h2>Item added</h2>}
-      {dlt && <h2>item deleted</h2>} */}
 
         <h3>Grocery Bud</h3>
         <div className='form-control'>
