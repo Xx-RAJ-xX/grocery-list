@@ -1,25 +1,143 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState,useEffect} from 'react';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import Alert from './Alert';
+const App = () => {
 
-function App() {
+  const [grocery, setGrocery] =useState("");
+  const [list,setList] =useState([]);
+  const [showClear,setShowClear] = useState(false);
+  const [add,setAdd] = useState(false);
+  const [dlt,setDlt] = useState(false);
+  const [isEdit,setIsEdit] =useState(false);
+  const [idin,setIdin] = useState(0);
+  const [alert,setAlert] = useState({show: false, msg: "" , type:'' });
+  
+  const showAlert =(show =false,type='',msg='') =>{
+    setAlert({show,type,msg});
+  }
+
+  const handleSubmit =(e) =>{
+     e.preventDefault();    
+       setAdd(true);
+       setDlt(false);
+       setIsEdit(false);
+       if(grocery){
+         const item={id: new Date().getTime().toString() , grocery};
+         
+         setList((list) =>{
+           return [...list,item]
+         });
+
+         setGrocery('');
+         showAlert(true, 'success', 'item added to the list');
+       }
+       else
+       {
+         showAlert(true, 'danger', 'please enter value');
+       }
+
+  }
+
+  useEffect(()=>{
+     if(list.length===0){setShowClear(false);}
+     else{setShowClear(true);}
+  },[list])
+
+  const handleDelete =(id) =>{
+    setAdd(false);
+    setDlt(true);
+    showAlert(true, 'danger', 'item removed');
+    const newList =list.filter((item) =>item.id !==id);
+    setList(newList);
+
+  }
+
+  const handleEdit =(grocery,id) =>{
+    setGrocery(grocery);
+    setIsEdit(true);
+    setIdin(id);
+    
+  }
+
+  const handleClear = () =>{
+    setAdd(false);
+    setDlt(false);
+    showAlert(true, 'danger', 'empty list');
+    setList([]);
+  }
+
+  const handleEditSubmit = (e) =>{
+    e.preventDefault();
+    setAdd(true);
+       setDlt(false);
+       setIsEdit(false);
+       if(grocery){
+
+        {
+          list.map((item)=>{
+            if(item.id===idin){
+              item.grocery = grocery;
+            }
+          })
+        }
+
+         setGrocery('');
+         showAlert(true, 'success', 'value changed');
+       }
+       else
+       {
+         showAlert(true, 'danger', 'please enter value');
+       }
+
+
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <section className='section-center'>
+      
+      
+      <form onSubmit={isEdit ? handleEditSubmit : handleSubmit} className='grocery-form'>
+
+       
+        {alert.show && <Alert {...alert} removeAlert={showAlert} list={list} />}
+        {/* {add &&<h2>Item added</h2>}
+      {dlt && <h2>item deleted</h2>} */}
+
+        <h3>Grocery Bud</h3>
+        <div className='form-control'>
+        <input 
+          type="text" 
+          className="grocery"
+          id="grocery" 
+          placeholder='e.g. eggs'
+          value={grocery} 
+          onChange={(e) => setGrocery(e.target.value)} 
+          />
+        <button type="submit" className='submit-btn'>{isEdit ? 'edit' : 'submit'}</button>
+        </div>
+      </form>
+      <div className='grocery-container'>
+        <div className="grocery-list">
+      {
+        list.map((item)=>{
+          const {id,grocery}=item;
+          return(
+            <article className="grocery-item" key={id}>
+                <p className="title">{grocery}</p>
+                <div className="btn-container">
+                <button type='button' className='edit-btn' onClick ={()=>handleEdit(grocery,id)}><FaEdit /></button>
+                <button type='button' className="delete-btn" onClick= {() =>handleDelete(id)} ><FaTrash /></button>
+                </div>
+            </article>
+          );
+        })
+      }
+      </div>
+
+      {showClear && <button onClick={handleClear} className='clear-btn'>clear items</button>}
+     </div>
+    </section>
+  )
 }
 
-export default App;
+export default App
