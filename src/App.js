@@ -1,10 +1,20 @@
 import React, {useState,useEffect} from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import Alert from './Alert';
+
+
+const getLocalStorage = () => {
+  let list=localStorage.getItem('list');
+  if(list){return JSON.parse(localStorage.getItem('list'))}
+
+  else{return []}
+}
+
+
 const App = () => {
 
   const [grocery, setGrocery] =useState("");
-  const [list,setList] =useState([]);
+  const [list,setList] =useState(getLocalStorage());
   const [showClear,setShowClear] = useState(false);
   const [isEdit,setIsEdit] =useState(false);
   const [idin,setIdin] = useState(0);
@@ -35,6 +45,7 @@ const App = () => {
   }
 
   useEffect(()=>{
+    localStorage.setItem('list', JSON.stringify(list))
      if(list.length===0){setShowClear(false);}
      else{setShowClear(true);}
   },[list])
